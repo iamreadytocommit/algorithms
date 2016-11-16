@@ -1,5 +1,6 @@
 package me.forklift.y2016;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -31,45 +32,50 @@ public class FIXPAREN {
         String expression = arr.split(" ")[0];
         String priority = arr.split(" ")[1];
         
-        String answer = "";
-        String str = "";
+        char[] answer = new char[expression.length()];
+        Arrays.fill(answer, ' ');
         
         for(int ii = 0; ii < expression.length(); ii++) {
             char currCh = expression.charAt(ii);
-            int currId = getParenthesislId(currCh);
+            int currId = getParenthesisId(currCh);
             
             //in case of open parenthesis , store it to stack
             if (isOpenParenthesis(currCh))
                 stack.push(currId);
             else {
                 //compare current parenthesis with popped parenthesis from stack 
-                int choosedParenthesis = getNeedParenthesisId(stack.pop(), currId, priority);
+                int choosedParenthesis = getNeedParenthesisId(stack.pop(), currId, priority);                
                 
-                str = makeString(choosedParenthesis, str);
-            }
-            
-            if (stack.isEmpty()) {
-                answer += str;
-                str = "";
-            }                
+                makeString(choosedParenthesis, answer, ii);
+            }            
         }
 
-        return answer;
+        return String.valueOf(answer);
     }
     
-    //make expression using parenthesis id 
-    public static String makeString(int id, String str) {
-        switch(id) {
-        case 0 : return "<" + str + ">";
-        case 1 : return "(" + str + ")";
-        case 2 : return "{" + str + "}";
-        case 3 : return "[" + str + "]";
-        default : return "";
+    public static void makeString(int id, char[] answer, int position) {        
+        answer[position] = getParenthesisById(id, "CLOSE");
+        for(int ii = position; ii >=0; ii--) {
+            if (answer[ii] == ' ') {
+                answer[ii] =  getParenthesisById(id, "OPEN");
+                break;
+            }
         }
+    }
+
+    public static char getParenthesisById(int id, String openOrClose) {
+        switch(id) {
+        case 0 : return "OPEN".equals(openOrClose)?'<':'>';
+        case 1 : return "OPEN".equals(openOrClose)?'(':')';
+        case 2 : return "OPEN".equals(openOrClose)?'{':'}';
+        case 3 : return "OPEN".equals(openOrClose)?'[':']';
+        default : return '?';
+        }
+        
     }
     
     //define id for each parenthesis
-    public static int getParenthesislId(char ch) {
+    public static int getParenthesisId(char ch) {
         String symbol = String.valueOf(ch);
         return "<>".contains(symbol)? 0 :
                "()".contains(symbol)? 1 :
@@ -88,7 +94,7 @@ public class FIXPAREN {
     //compare rank with stored & current parenthesis and return high ranked parenthesis
     public static int getNeedParenthesisId(int stored, int current, String priority) {
         for(int ii = 0; ii < priority.length(); ii++) {
-            int id = getParenthesislId(priority.charAt(ii));
+            int id = getParenthesisId(priority.charAt(ii));
             if (stored == id) return stored;
             if (current == id) return current;
         }
