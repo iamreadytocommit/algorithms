@@ -8,6 +8,7 @@ https://algospot.com/judge/problem/read/XHAENEUNG
 ------------------------------------------*/
 public class XHAENEUNG {    
 
+    //sorted by each character 
     private static String[] sortedNumbers = {
             "eorz", "eno", "otw", "eehrt", "foru", 
             "efiv", "isx", "eensv", "eghit", "einn", "ent"
@@ -46,6 +47,7 @@ public class XHAENEUNG {
         case "/" : result = x/y; break;
         }
         
+        //couldn't parse cases
         if (x == -1 || y == -1 || z == -1)
             return "No";
 
@@ -55,6 +57,7 @@ public class XHAENEUNG {
             return (z == result) ? "Yes" : "No";
     }
     
+    //sort by each character unit & compare with sortedNumbers array
     public static int getNumber(String str) {
         char[]  tmp = str.toCharArray();
         Arrays.sort(tmp);
